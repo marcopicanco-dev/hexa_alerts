@@ -1,0 +1,72 @@
+<% stat_rows = {
+  "shots" => "Chutes", "shots_on_goal" => "Chutes a gol", "possession" => "Posse de bola",
+  "passes" => "Passes", "pass_accuracy" => "Precisão de passe", "fouls" => "Faltas",
+  "yellow_cards" => "Cartões amarelos", "red_cards" => "Cartões vermelhos",
+  "offsides" => "Impedimentos", "corners" => "Escanteios"
+} %>
+<% percentages = %w[possession pass_accuracy] %>
+
+<section id="match-live-panel" class="overflow-hidden rounded-3xl border border-white/10 bg-slate-900 shadow-2xl shadow-black/30">
+  <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-white/10 p-6 sm:p-8">
+    <div class="text-center">
+      <span class="text-4xl"><%= team_flag(match.home_team) %></span>
+      <h1 class="mt-2 font-black sm:text-xl"><%= match.home_team.name %></h1>
+    </div>
+    <div class="min-w-32 text-center">
+      <p class="text-4xl font-black sm:text-5xl"><%= match.home_score %> <span class="text-slate-600">×</span> <%= match.away_score %></p>
+      <% if match.live? %>
+        <div class="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-400/10 px-3 py-1.5 text-sm font-black text-emerald-400">
+          <span class="h-2 w-2 animate-pulse rounded-full bg-emerald-400"></span>
+          <span
+            data-controller="match-clock"
+            data-match-clock-seconds-value="<%= match.clock_seconds %>"
+            data-match-clock-running-value="<%= match.clock_running? %>"
+            data-match-clock-updated-at-value="<%= match.clock_updated_at&.iso8601 %>"
+            data-match-clock-target="display"
+          >00:00</span>
+        </div>
+      <% else %>
+        <p class="mt-3 text-sm font-bold uppercase text-slate-500"><%= match_status_label(match) %></p>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <span class="text-4xl"><%= team_flag(match.away_team) %></span>
+      <h1 class="mt-2 font-black sm:text-xl"><%= match.away_team.name %></h1>
+    </div>
+  </div>
+
+  <div class="p-5 sm:p-8">
+    <div>
+      <h2 class="text-center text-xs font-black uppercase tracking-widest text-slate-400">Probabilidade de vitória ao vivo</h2>
+      <div class="mt-5 grid grid-cols-3 text-sm">
+        <div><strong><%= match.home_team.name %></strong><p class="text-sky-300"><%= match.win_probability(:home) %>%</p></div>
+        <div class="text-center"><strong>Empate</strong><p class="text-slate-400"><%= match.win_probability(:draw) %>%</p></div>
+        <div class="text-right"><strong><%= match.away_team.name %></strong><p class="text-rose-300"><%= match.win_probability(:away) %>%</p></div>
+      </div>
+      <div class="mt-3 flex h-2 overflow-hidden rounded-full bg-slate-800">
+        <span class="bg-sky-300" style="width: <%= match.win_probability(:home) %>%"></span>
+        <span class="bg-slate-400" style="width: <%= match.win_probability(:draw) %>%"></span>
+        <span class="bg-rose-300" style="width: <%= match.win_probability(:away) %>%"></span>
+      </div>
+    </div>
+
+    <div class="mt-10">
+      <div class="mb-5 grid grid-cols-[1fr_2fr_1fr] items-center text-center">
+        <span class="text-2xl"><%= team_flag(match.home_team) %></span>
+        <h2 class="text-xs font-black uppercase tracking-widest text-slate-400">Estatísticas dos times</h2>
+        <span class="text-2xl"><%= team_flag(match.away_team) %></span>
+      </div>
+      <dl class="space-y-1">
+        <% stat_rows.each do |key, label| %>
+          <% home_value = match.stat(key, :home) %>
+          <% away_value = match.stat(key, :away) %>
+          <div class="grid grid-cols-[1fr_2fr_1fr] items-center rounded-xl px-3 py-2.5 text-sm odd:bg-white/[0.025]">
+            <dd class="font-semibold"><%= home_value.nil? ? "—" : "#{home_value}#{'%' if percentages.include?(key)}" %></dd>
+            <dt class="text-center text-slate-300"><%= label %></dt>
+            <dd class="text-right font-semibold"><%= away_value.nil? ? "—" : "#{away_value}#{'%' if percentages.include?(key)}" %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  </div>
+</section>

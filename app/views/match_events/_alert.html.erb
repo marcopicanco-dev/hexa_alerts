@@ -1,0 +1,10 @@
+<article id="<%= dom_id(match_event) %>" class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/10">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <span class="rounded-full bg-emerald-400/10 px-2.5 py-1 text-xs font-bold uppercase text-emerald-300"><%= match_event.kind.humanize %></span>
+      <h3 class="mt-3 text-lg font-bold"><%= match_event.team.name %></h3>
+      <p class="mt-1 text-sm text-slate-400"><%= match_event.match.home_team.fifa_code %> <%= match_event.match.home_score %> × <%= match_event.match.away_score %> <%= match_event.match.away_team.fifa_code %><%= " · #{match_event.payload['player']}" if match_event.payload['player'].present? %></p>
+    </div>
+    <time class="text-sm text-slate-500" datetime="<%= match_event.occurred_at.iso8601 %>"><%= l match_event.occurred_at, format: :short %></time>
+  </div>
+</article>

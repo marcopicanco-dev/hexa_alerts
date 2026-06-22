@@ -1,0 +1,28 @@
+<% content_for :title, "#{@match.home_team.name} × #{@match.away_team.name} — HexaAlerts" %>
+
+<main class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="border-b border-white/10 px-5 py-4">
+    <div class="mx-auto flex max-w-4xl items-center justify-between">
+      <%= link_to "← Todos os jogos", root_path, class: "text-sm font-semibold text-slate-400 hover:text-white" %>
+      <span class="text-xs font-bold uppercase tracking-[0.25em] text-emerald-400">HexaAlerts</span>
+    </div>
+  </header>
+
+  <%= turbo_stream_from "match_#{@match.id}" %>
+  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <%= render "matches/live_panel", match: @match %>
+
+    <section class="mt-8 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+      <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Minuto a minuto</h2>
+      <div class="mt-5 space-y-3">
+        <% @events.each do |event| %>
+          <div class="flex items-center gap-4 rounded-xl bg-slate-900/80 p-4">
+            <time class="w-14 font-mono text-sm font-bold text-emerald-400"><%= event.payload["minute"].presence || "—" %>'</time>
+            <div><p class="font-bold"><%= event.kind.humanize %></p><p class="text-sm text-slate-400"><%= event.team.name %><%= " · #{event.payload['player']}" if event.payload['player'].present? %></p></div>
+          </div>
+        <% end %>
+        <% if @events.empty? %><p class="py-8 text-center text-slate-500">Os eventos da partida aparecerão aqui.</p><% end %>
+      </div>
+    </section>
+  </div>
+</main>

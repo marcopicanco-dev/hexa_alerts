@@ -1,0 +1,78 @@
+<% content_for :title, "HexaAlerts — Copa 2026 em tempo real" %>
+
+<main class="min-h-screen bg-slate-950 text-slate-100" data-controller="live-matches-modal">
+  <header class="border-b border-white/10 bg-slate-950/80 px-6 py-5 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-5">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.3em] text-emerald-400">Copa do Mundo 2026</p>
+        <h1 class="mt-1 text-2xl font-black">HexaAlerts</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <% if @live_matches.any? %>
+          <button type="button" data-action="live-matches-modal#open" aria-haspopup="dialog" class="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-400 px-4 py-2 text-sm font-black text-slate-950 shadow-lg shadow-emerald-400/20 hover:bg-emerald-300">
+            <span class="h-2 w-2 animate-pulse rounded-full bg-slate-950"></span>
+            <%= pluralize(@live_matches.size, "jogo ao vivo", "jogos ao vivo") %>
+          </button>
+        <% end %>
+        <% if @fans.any? %>
+          <%= form_with url: root_path, method: :get, class: "hidden items-center gap-2 sm:flex" do |form| %>
+            <%= form.label :fan_id, "Torcedor", class: "text-sm text-slate-400" %>
+            <%= form.select :fan_id, options_from_collection_for_select(@fans, :id, :name, @fan&.id), {}, onchange: "this.form.requestSubmit()", class: "rounded-lg border border-white/10 bg-slate-900 px-3 py-2" %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </header>
+
+  <%= render "dashboard/live_matches_modal", matches: @live_matches if @live_matches.any? %>
+
+  <div class="mx-auto grid max-w-6xl gap-8 px-6 py-10 lg:grid-cols-[1fr_22rem]">
+    <section>
+      <div class="mb-10">
+        <div class="mb-5 flex items-end justify-between">
+          <div><p class="text-sm font-semibold text-sky-400">PARTIDAS</p><h2 class="text-3xl font-black">Jogos da Copa</h2></div>
+          <span class="text-sm text-slate-500">Clique para acompanhar</span>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2" data-testid="matches-list">
+          <%= render partial: "matches/card", collection: @matches, as: :match %>
+        </div>
+      </div>
+
+      <div class="mb-5 flex items-end justify-between">
+        <div><p class="text-sm font-semibold text-emerald-400">AO VIVO</p><h2 class="text-3xl font-black">Seus alertas</h2></div>
+        <span class="rounded-full bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">atualização automática</span>
+      </div>
+      <%= turbo_stream_from "fan_#{@fan.id}_alerts" if @fan %>
+      <div id="alerts" class="space-y-3">
+        <%= render partial: "match_events/alert", collection: @events, as: :match_event %>
+        <% if @events.empty? %><div id="alerts-empty" class="rounded-2xl border border-dashed border-white/15 p-10 text-center text-slate-400">Os próximos lances dos seus times aparecem aqui.</div><% end %>
+      </div>
+    </section>
+
+    <aside class="space-y-6">
+      <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+        <h2 class="font-bold">Criar alerta</h2>
+        <% if @fan %>
+          <%= form_with model: AlertSubscription.new, class: "mt-4 space-y-3" do |form| %>
+            <%= form.hidden_field :fan_id, value: @fan.id %>
+            <%= form.select :team_id, options_from_collection_for_select(@teams, :id, :name), { include_blank: "Seleção (opcional)" }, class: "w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2" %>
+            <%= form.select :match_id, @matches.map { |match| ["#{match.home_team.fifa_code} × #{match.away_team.fifa_code}", match.id] }, { include_blank: "Jogo (opcional)" }, class: "w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2" %>
+            <%= form.select :event_kind, MatchEvent::KINDS.map { |kind| [kind.humanize, kind] }, { include_blank: "Qualquer evento" }, class: "w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2" %>
+            <%= form.submit "Ativar alerta", class: "w-full cursor-pointer rounded-lg bg-emerald-400 px-4 py-2 font-bold text-slate-950 hover:bg-emerald-300" %>
+          <% end %>
+        <% else %><p class="mt-3 text-sm text-slate-400">Cadastre um torcedor via console ou seed para começar.</p><% end %>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+        <h2 class="font-bold">Assinaturas ativas</h2>
+        <div class="mt-3 space-y-2 text-sm">
+          <% @subscriptions.each do |subscription| %>
+            <div class="flex items-center justify-between gap-3 rounded-lg bg-slate-900 p-3">
+              <span><%= subscription.team&.name || "Jogo ##{subscription.match_id}" %> · <%= subscription.event_kind.presence || "todos" %></span>
+              <%= button_to "×", alert_subscription_path(subscription), method: :delete, class: "text-red-300", aria: { label: "Remover alerta" } %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>

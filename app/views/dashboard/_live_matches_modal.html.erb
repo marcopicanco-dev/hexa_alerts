@@ -1,0 +1,19 @@
+<div>
+  <dialog
+    data-live-matches-modal-target="dialog"
+    data-action="click->live-matches-modal#closeOnBackdrop close->live-matches-modal#unlock"
+    aria-labelledby="live-matches-title"
+    class="m-auto max-h-[90vh] w-[min(44rem,calc(100%-2rem))] overflow-y-auto rounded-3xl border border-white/10 bg-slate-950 p-0 text-slate-100 shadow-2xl backdrop:bg-black/80 backdrop:backdrop-blur-sm"
+  >
+    <div class="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-slate-950/95 px-6 py-5 backdrop-blur">
+      <div>
+        <p class="text-xs font-black uppercase tracking-[0.25em] text-emerald-400">Agora</p>
+        <h2 id="live-matches-title" class="mt-1 text-2xl font-black">Jogos ao vivo</h2>
+      </div>
+      <button type="button" data-action="live-matches-modal#close" aria-label="Fechar jogos ao vivo" class="h-10 w-10 cursor-pointer rounded-full bg-white/10 text-xl hover:bg-white/20">×</button>
+    </div>
+    <div class="space-y-3 p-5 sm:p-6" data-testid="live-matches-modal">
+      <%= render partial: "matches/card", collection: matches, as: :match %>
+    </div>
+  </dialog>
+</div>

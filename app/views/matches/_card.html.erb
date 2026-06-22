@@ -1,0 +1,11 @@
+<%= link_to match_path(match), data: { match_status: match.status }, class: "match-card group block rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-emerald-400/40 hover:bg-white/[0.08]" do %>
+  <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider">
+    <span class="<%= match.live? ? 'text-emerald-400' : 'text-slate-500' %>"><%= match_status_label(match) %></span>
+    <span class="text-slate-500">Grupo <%= match.home_team.group_name.presence || "—" %> →</span>
+  </div>
+  <div class="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+    <div><span class="text-2xl"><%= team_flag(match.home_team) %></span><p class="mt-1 font-bold"><%= match.home_team.name %></p></div>
+    <div class="text-center"><p class="text-3xl font-black"><%= match.home_score %> <span class="text-slate-600">×</span> <%= match.away_score %></p></div>
+    <div class="text-right"><span class="text-2xl"><%= team_flag(match.away_team) %></span><p class="mt-1 font-bold"><%= match.away_team.name %></p></div>
+  </div>
+<% end %>
