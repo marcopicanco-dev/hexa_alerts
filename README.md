@@ -592,21 +592,6 @@ Terceira versão:
   contrário.
 - Regras de negócio devem ficar em serviços, modelos e jobs, não em controladores.
 
-## Checklist para o Dev Junior
-
-1. Instalar Ruby, PostgreSQL, Redis e Bun.
-2. Rodar `bundle install`.
-3. Rodar `bun install`.
-4. Rodar `bin/rails db:create`.
-5. Rodar `bin/rails db:migrate`.
-6. Adicionar `sidekiq` e `redis`.
-7. Configurar `REDIS_URL`.
-8. Gerar modelos de domínio.
-9. Criar endpoint de webhook.
-10. Criar job de processamento.
-11. Criar um painel com Turbo Streams.
-12. Escrever testes de webhook, job e transmissão.
-13. Rodar `bin/rails test`, `bundle exec rubocop`, `bundle exec brakeman`.
 
 Siga esse fluxo com calma. A melhor arquitetura aqui não nasce da inclusão de
 muitas peças, mas da garantia de que cada peça tenha uma responsabilidade clara.
@@ -726,6 +711,3 @@ A sincronização consulta o dia informado e o dia anterior para cobrir partidas
 que atravessam a meia-noite em UTC. Após persistir os dados instantâneos,
 publica uma substituição Turbo Stream para os navegadores que acompanham a
 partida.
-
-Ainda pertencem ao roadmap posterior: login, canais externos, integração com um
-provedor oficial com SLA, limitação de requisições e observabilidade avançada.
