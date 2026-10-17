@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   root "dashboard#index"
+  get "favicon.ico", to: redirect("/icon.svg")
+  resources :competition_syncs, only: :create
 
   resources :matches, only: :show
   resources :alert_subscriptions, only: %i[create destroy]

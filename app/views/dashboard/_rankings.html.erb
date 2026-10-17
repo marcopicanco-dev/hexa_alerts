@@ -1,0 +1,52 @@
+<section id="rankings" class="scroll-mt-6" aria-label="Rankings finais da Copa do Mundo">
+  <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <p class="eyebrow text-emerald-400">QUEM FEZ HISTÓRIA</p>
+      <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Os destaques do Mundial.</h2>
+    </div>
+    <span class="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-400">Classificação final · 2026</span>
+  </div>
+
+  <div class="grid gap-5 lg:grid-cols-2">
+    <div class="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60">
+      <div class="flex items-center justify-between border-b border-white/10 px-5 py-5 sm:px-6">
+        <h3 class="font-bold">Top 5 seleções</h3>
+        <span class="text-xs text-slate-500">POSIÇÃO FINAL</span>
+      </div>
+      <ol class="divide-y divide-white/5" data-testid="final-standings">
+        <% @summary.standings.each do |team| %>
+          <li class="flex items-center gap-4 px-5 py-4 sm:px-6 <%= 'bg-amber-300/[0.04]' if team['position'] == 1 %>">
+            <span class="w-5 font-mono text-sm <%= team['position'] == 1 ? 'text-amber-300' : 'text-slate-500' %>"><%= format('%02d', team['position']) %></span>
+            <span class="flex h-10 w-11 items-center justify-center rounded-lg bg-white/5 text-2xl" aria-hidden="true"><%= country_flag(team['code']) %></span>
+            <div class="min-w-0 flex-1"><p class="font-semibold"><%= team['name'] %></p><p class="mt-0.5 text-xs text-slate-500"><%= team['code'] %></p></div>
+            <span class="text-right text-xs <%= team['position'] == 1 ? 'text-amber-300' : 'text-slate-400' %>"><%= team['achievement'] %></span>
+          </li>
+        <% end %>
+      </ol>
+      <div class="border-t border-white/5 px-5 py-4 text-xs text-slate-500 sm:px-6">
+        <%= link_to "Classificação oficial na FIFA ↗", @summary.sources.fetch('standings'), target: "_blank", rel: "noopener noreferrer", class: "hover:text-emerald-300" %>
+      </div>
+    </div>
+
+    <div class="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60">
+      <div class="flex items-center justify-between border-b border-white/10 px-5 py-5 sm:px-6">
+        <h3 class="font-bold">Top 5 artilheiros</h3>
+        <span class="text-xs text-slate-500">CHUTEIRA DE OURO</span>
+      </div>
+      <ol class="divide-y divide-white/5" data-testid="top-scorers">
+        <% @summary.scorers.each do |player| %>
+          <li class="flex items-center gap-4 px-5 py-4 sm:px-6 <%= 'bg-emerald-400/[0.04]' if player['position'] == 1 %>">
+            <span class="w-5 font-mono text-sm <%= player['position'] == 1 ? 'text-emerald-400' : 'text-slate-500' %>"><%= format('%02d', player['position']) %></span>
+            <span class="flex h-10 w-11 items-center justify-center rounded-lg bg-white/5 text-2xl" aria-hidden="true"><%= country_flag(player['code']) %></span>
+            <div class="min-w-0 flex-1"><p class="text-sm font-semibold sm:text-base"><%= player['name'] %></p><p class="mt-0.5 text-xs text-slate-500"><%= player['team'] %> · <%= player['assists'] %> assist.</p></div>
+            <div class="text-right"><strong class="font-mono text-xl <%= player['position'] == 1 ? 'text-emerald-400' : 'text-white' %>"><%= player['goals'] %></strong><span class="ml-1.5 text-xs text-slate-500">gols</span></div>
+          </li>
+        <% end %>
+      </ol>
+      <div class="border-t border-white/5 px-5 py-4 text-xs text-slate-500 sm:px-6">
+        <%= link_to "Ranking oficial na FIFA ↗", @summary.sources.fetch('scorers'), target: "_blank", rel: "noopener noreferrer", class: "hover:text-emerald-300" %>
+        <span class="mt-1 block">Desempate por assistências e, depois, menor tempo em campo.</span>
+      </div>
+    </div>
+  </div>
+</section>

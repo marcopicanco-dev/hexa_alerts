@@ -18,6 +18,10 @@ FileUtils.chdir APP_ROOT do
   # Install JavaScript dependencies
   system!("bun install")
 
+  puts "\n== Building JavaScript and CSS =="
+  system!("bun run build")
+  system!("bun run build:css")
+
   # puts "\n== Copying sample files =="
   # unless File.exist?("config/database.yml")
   #   FileUtils.cp "config/database.yml.sample", "config/database.yml"

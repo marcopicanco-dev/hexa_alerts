@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_22_000004) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_17_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,6 +26,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_22_000004) do
     t.index ["fan_id"], name: "index_alert_subscriptions_on_fan_id"
     t.index ["match_id"], name: "index_alert_subscriptions_on_match_id"
     t.index ["team_id"], name: "index_alert_subscriptions_on_team_id"
+  end
+
+  create_table "competition_syncs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "details", default: {}, null: false
+    t.text "error_message"
+    t.datetime "finished_at"
+    t.string "status", default: "queued", null: false
+    t.datetime "updated_at", null: false
+    t.index "(1)", name: "index_one_active_competition_sync", unique: true, where: "((status)::text = ANY ((ARRAY['queued'::character varying, 'running'::character varying])::text[]))"
   end
 
   create_table "fans", force: :cascade do |t|

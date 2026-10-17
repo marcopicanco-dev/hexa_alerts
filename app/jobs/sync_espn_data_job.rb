@@ -16,6 +16,6 @@ class SyncEspnDataJob < ApplicationJob
       scheduler.release(token)
     end
 
-    scheduler.schedule(date: Date.current.iso8601) if recurring
+    scheduler.schedule(date: Date.current.iso8601) if recurring && Date.current <= WorldCup2026::Summary::ENDS_ON
   end
 end

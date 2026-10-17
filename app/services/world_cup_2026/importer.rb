@@ -54,9 +54,9 @@ module WorldCup2026
         match.assign_attributes(
           home_team:, away_team:, starts_at:,
           data_source: "worldcup2026", stage: payload["type"], matchday: payload["matchday"].to_i,
-          venue_external_id: payload["stadium_id"], source_payload: payload,
-          status: status_for(payload)
+          venue_external_id: payload["stadium_id"], source_payload: match.source_payload.merge(payload)
         )
+        match.status = status_for(payload) if authoritative || match.new_record? || finished?(payload)
         assign_score(match, payload) if authoritative || match.new_record? || finished?(payload)
         match.save!
         match.external_references.find_or_create_by!(source: "worldcup2026", external_id:)

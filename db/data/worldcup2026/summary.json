@@ -1,0 +1,87 @@
+{
+  "competition": "FIFA World Cup 2026",
+  "verified_on": "2026-10-17",
+  "sources": {
+    "standings": "https://www.fifa.com/en/articles/final-tournament-standings",
+    "scorers": "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/adidas-golden-boot-race-top-scorer"
+  },
+  "standings": [
+    {
+      "position": 1,
+      "code": "ESP",
+      "name": "Espanha",
+      "iso2": "ES",
+      "achievement": "Campeã mundial"
+    },
+    {
+      "position": 2,
+      "code": "ARG",
+      "name": "Argentina",
+      "iso2": "AR",
+      "achievement": "Vice-campeã"
+    },
+    {
+      "position": 3,
+      "code": "ENG",
+      "name": "Inglaterra",
+      "iso2": "GB",
+      "achievement": "Terceiro lugar"
+    },
+    {
+      "position": 4,
+      "code": "FRA",
+      "name": "França",
+      "iso2": "FR",
+      "achievement": "Quarto lugar"
+    },
+    {
+      "position": 5,
+      "code": "NOR",
+      "name": "Noruega",
+      "iso2": "NO",
+      "achievement": "Quartas de final"
+    }
+  ],
+  "scorers": [
+    {
+      "position": 1,
+      "name": "Kylian Mbappé",
+      "team": "França",
+      "code": "FRA",
+      "goals": 10,
+      "assists": 4
+    },
+    {
+      "position": 2,
+      "name": "Lionel Messi",
+      "team": "Argentina",
+      "code": "ARG",
+      "goals": 8,
+      "assists": 4
+    },
+    {
+      "position": 3,
+      "name": "Jude Bellingham",
+      "team": "Inglaterra",
+      "code": "ENG",
+      "goals": 7,
+      "assists": 1
+    },
+    {
+      "position": 4,
+      "name": "Erling Haaland",
+      "team": "Noruega",
+      "code": "NOR",
+      "goals": 7,
+      "assists": 0
+    },
+    {
+      "position": 5,
+      "name": "Ousmane Dembélé",
+      "team": "França",
+      "code": "FRA",
+      "goals": 6,
+      "assists": 2
+    }
+  ]
+}

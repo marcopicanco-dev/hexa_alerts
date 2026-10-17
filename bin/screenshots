@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+require "bundler/setup"
+require "selenium-webdriver"
+require "fileutils"
+
+Selenium::WebDriver.logger.level = :warn
+
+base_url = ENV.fetch("SCREENSHOT_BASE_URL", "http://localhost:3000").delete_suffix("/")
+output = File.expand_path("../docs/screenshots", __dir__)
+FileUtils.mkdir_p(output)
+
+options = Selenium::WebDriver::Chrome::Options.new
+options.add_argument("--headless=new")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--window-size=1440,1850")
+driver = Selenium::WebDriver.for(:chrome, options:)
+wait = Selenium::WebDriver::Wait.new(timeout: 20)
+
+begin
+  driver.navigate.to(base_url)
+  wait.until { driver.find_elements(css: "[data-testid='top-scorers'] li").size == 5 }
+  driver.execute_script("return document.fonts.ready")
+  driver.save_screenshot(File.join(output, "dashboard.png"))
+
+  final = driver.find_element(css: "[data-testid='matches-list'] .match-card")
+  final_url = final.attribute("href")
+  driver.navigate.to(final_url)
+  wait.until { driver.find_elements(css: "#match-live-panel dt").any? }
+  driver.manage.window.resize_to(1440, 1200)
+  driver.save_screenshot(File.join(output, "match.png"))
+
+  driver.manage.window.resize_to(390, 1600)
+  driver.navigate.to(base_url)
+  wait.until { driver.find_elements(css: "[data-testid='top-scorers'] li").size == 5 }
+  raise "Mobile layout overflows" if driver.execute_script("return document.documentElement.scrollWidth > window.innerWidth")
+
+  driver.save_screenshot(File.join(output, "mobile.png"))
+  puts "Capturas reais salvas em #{output}"
+ensure
+  driver.quit
+end

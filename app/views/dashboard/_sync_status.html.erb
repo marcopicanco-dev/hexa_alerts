@@ -1,0 +1,22 @@
+<div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-3 text-xs sm:px-8" role="status" aria-live="polite">
+  <div class="flex items-center gap-2 text-slate-400">
+    <span class="h-1.5 w-1.5 rounded-full <%= @sync&.active? ? 'animate-pulse bg-amber-300' : 'bg-emerald-400' %>"></span>
+    <% if @sync&.active? %>
+      <span>Atualização em andamento. O painel será recarregado ao concluir.</span>
+    <% elsif @sync&.completed? %>
+      <span>Última atualização: <%= @sync.finished_at.in_time_zone("America/Sao_Paulo").strftime("%d/%m/%Y às %H:%M") %> (Brasília)</span>
+      <span class="hidden sm:inline">· <%= @sync.details.dig("espn", "matches") %> partidas sincronizadas</span>
+    <% elsif @sync&.status == "failed" %>
+      <span class="text-amber-200"><%= @sync.error_message %></span>
+    <% else %>
+      <span>Acervo da Copa 2026 · Atualize para sincronizar todas as partidas.</span>
+    <% end %>
+  </div>
+  <% if @sync&.fallback? %>
+    <span class="text-amber-200">Cópia local · API indisponível</span>
+  <% elsif @sync&.details&.dig("football_data", "warning") %>
+    <span class="text-amber-200"><%= @sync.details.dig("football_data", "warning") %></span>
+  <% else %>
+    <span class="text-slate-500">Rankings finais · fonte: FIFA</span>
+  <% end %>
+</div>

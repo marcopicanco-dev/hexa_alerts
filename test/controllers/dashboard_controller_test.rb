@@ -5,7 +5,39 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_response :success
-    assert_select "h1", "HexaAlerts"
+    assert_select "h1", "HexaAlerts."
+    assert_select "link[rel='stylesheet']", count: 1
+    assert_select "link[href*='application.tailwind']", count: 0
+  end
+
+  test "shows the final standings and top scorers after the tournament" do
+    travel_to Time.zone.local(2026, 10, 17, 12) do
+      get root_path
+
+      assert_response :success
+      assert_select "[data-testid='competition-status']", text: /COMPETIÇÃO ENCERRADA/
+      assert_select "[data-testid='final-standings'] li", count: 5
+      assert_select "[data-testid='final-standings'] li:first-child", text: /Espanha/
+      assert_select "[data-testid='final-standings'] li:last-child", text: /Noruega/
+      assert_select "[data-testid='top-scorers'] li", count: 5
+      assert_select "[data-testid='top-scorers'] li:first-child", text: /Kylian Mbappé.*10/m
+      assert_select "form[action='#{competition_syncs_path}'][method='post']"
+    end
+  end
+
+  test "filters group matches and knockout matches" do
+    home = Team.create!(fifa_code: "ESP", name: "Espanha", country: "Espanha")
+    away = Team.create!(fifa_code: "ARG", name: "Argentina", country: "Argentina")
+    final = Match.create!(external_id: "final", home_team: home, away_team: away, starts_at: Time.current, stage: "final")
+    group = Match.create!(external_id: "group", home_team: away, away_team: home, starts_at: 1.month.ago, stage: "group_stage")
+
+    get root_path(stage: "knockout")
+    assert_select "[data-testid='matches-list'] .match-card[href='#{match_path(final)}']"
+    assert_select "[data-testid='matches-list'] .match-card[href='#{match_path(group)}']", count: 0
+
+    get root_path(stage: "group")
+    assert_select "[data-testid='matches-list'] .match-card[href='#{match_path(group)}']"
+    assert_select "[data-testid='matches-list'] .match-card[href='#{match_path(final)}']", count: 0
   end
 
   test "renders only events covered by the fan subscription" do
@@ -21,7 +53,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "article", count: 1
-    assert_select "article", text: /Goal/
+    assert_select "article", text: /Gol/
   end
 
   test "lists live matches first and exposes them in a modal" do

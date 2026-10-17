@@ -1,4 +1,4 @@
-<% content_for :title, "#{@match.home_team.name} × #{@match.away_team.name} — HexaAlerts" %>
+<% content_for :title, "#{team_display_name(@match.home_team)} × #{team_display_name(@match.away_team)} — HexaAlerts" %>
 
 <main class="min-h-screen bg-slate-950 text-slate-100">
   <header class="border-b border-white/10 px-5 py-4">
@@ -17,8 +17,8 @@
       <div class="mt-5 space-y-3">
         <% @events.each do |event| %>
           <div class="flex items-center gap-4 rounded-xl bg-slate-900/80 p-4">
-            <time class="w-14 font-mono text-sm font-bold text-emerald-400"><%= event.payload["minute"].presence || "—" %>'</time>
-            <div><p class="font-bold"><%= event.kind.humanize %></p><p class="text-sm text-slate-400"><%= event.team.name %><%= " · #{event.payload['player']}" if event.payload['player'].present? %></p></div>
+            <time class="w-14 font-mono text-sm font-bold text-emerald-400"><%= event.payload.dig("clock", "displayValue").presence || "#{event.payload['minute'].presence || '—'}'" %></time>
+            <div><p class="font-bold"><%= event_kind_label(event.kind) %></p><p class="text-sm text-slate-400"><%= team_display_name(event.team) %><%= " · #{event.payload['player']}" if event.payload['player'].present? %></p></div>
           </div>
         <% end %>
         <% if @events.empty? %><p class="py-8 text-center text-slate-500">Os eventos da partida aparecerão aqui.</p><% end %>

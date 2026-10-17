@@ -7,15 +7,18 @@ module Espn
       "totalPasses" => "passes", "passPct" => "pass_accuracy"
     }.freeze
 
-    def initialize(client: Client.new, date: Date.current)
+    def initialize(client: Client.new, date: Date.current, tournament: false, broadcast: true)
       @client = client
       @date = date
+      @tournament = tournament
+      @broadcast = broadcast
     end
 
     def call
       imported = 0
       skipped = 0
-      client.events(dates: [ date - 1.day, date ]).each do |payload|
+      payloads = @tournament ? client.tournament_events : client.events(dates: [ date - 1.day, date ])
+      payloads.each do |payload|
         import_match(payload) ? imported += 1 : skipped += 1
       end
       Result.new(matches: imported, skipped:)
@@ -37,12 +40,12 @@ module Espn
       external_id = "espn-#{payload.fetch('id')}"
       starts_at = Time.zone.parse(payload.fetch("date"))
       match = Match.find_by_external_id(external_id) || matching_match(home_team, away_team, starts_at)
-      return false unless match
+      match ||= Match.new(external_id:, home_team:, away_team:, starts_at:, data_source: "espn")
 
       update_match(match, payload, competition, home, away)
       match.external_references.find_or_create_by!(source: "espn", external_id:)
       import_events(match, payload, competition, home, away)
-      broadcast(match)
+      broadcast(match) if @broadcast
       true
     end
 
@@ -50,6 +53,8 @@ module Espn
       state = payload.dig("status", "type", "state")
       statistics = match.statistics.merge(statistics_for(home, away, competition.fetch("details", [])))
       attributes = {
+        starts_at: Time.zone.parse(payload.fetch("date")),
+        stage: payload.dig("season", "slug")&.tr("-", "_") || match.stage,
         status: { "pre" => "scheduled", "in" => "live", "post" => "finished" }.fetch(state, match.status),
         home_score: home.fetch("score", match.home_score).to_i,
         away_score: away.fetch("score", match.away_score).to_i,
@@ -110,7 +115,7 @@ module Espn
           payload: detail.merge("provider" => "espn", "minute" => clock / 60, "player" => athlete&.fetch("displayName", nil))
         )
         event.save!
-        MatchEventBroadcaster.new(event).call
+        MatchEventBroadcaster.new(event).call if @broadcast
       end
     end
 
