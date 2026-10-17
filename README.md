@@ -276,6 +276,7 @@ configure `WEBHOOK_TOKEN`.
 
 ```bash
 bin/rails test
+bin/rails db:test:prepare test:system
 bin/rubocop
 bundle exec brakeman --no-pager
 ```
@@ -285,6 +286,12 @@ assinaturas, estatísticas, reconciliação de partidas, fallback do acervo comp
 rankings, filtros, exclusão de atualizações simultâneas e estados de sucesso e
 falha da sincronização. APIs são substituídas por clientes de teste para que a
 suíte não dependa de rede ou credenciais.
+
+Os testes de sistema usam Chrome em modo headless e cobrem rankings, navegação
+entre fases e detalhes das partidas, criação e remoção de alertas, layout no
+celular e atualização automática do painel após a execução do job. Os serviços
+externos são substituídos durante o teste da sincronização; Redis e Sidekiq não
+precisam estar em execução para rodar a suíte.
 
 ## Próximos passos
 
