@@ -7,7 +7,7 @@ on:
 
 jobs:
   scan_ruby:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
@@ -25,7 +25,7 @@ jobs:
         run: bin/bundler-audit
       
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       RUBOCOP_CACHE_ROOT: tmp/rubocop
     steps:
@@ -38,7 +38,7 @@ jobs:
           bundler-cache: true
 
       - name: Prepare RuboCop cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           DEPENDENCIES_HASH: ${{ hashFiles('.ruby-version', '**/.rubocop.yml', '**/.rubocop_todo.yml', 'Gemfile.lock') }}
         with:
@@ -51,7 +51,7 @@ jobs:
         run: bin/rubocop -f github
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
@@ -97,7 +97,7 @@ jobs:
         run: bin/rails db:test:prepare test
 
   system-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
@@ -143,7 +143,7 @@ jobs:
         run: bin/rails db:test:prepare test:system
 
       - name: Keep screenshots from failed system tests
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: screenshots
