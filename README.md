@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/hexa-alerts-modernista.png" width="1200" alt="HexaAlerts — do primeiro lance ao apito final. Arte modernista com uma bola de futebol dentro de um hexágono e sinais de notificação, em marfim, grafite e terracota.">
+</p>
+
 # HexaAlerts ⚽
 
 **Do primeiro lance ao apito final: uma aplicação Rails para acompanhar a Copa do Mundo de 2026.**
